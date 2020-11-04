@@ -6,7 +6,7 @@
 ; Reserved memory:
 ;
 ; $0000-$7EFF - RAM
-; 		TODO: 0-5
+; 		$0000-$0005 - Named variables
 ; 		$0100-$01FF - 6502 stack
 ; $7F00 - Display Interrupt
 ; $7FE0-$7FEF - 6522 VIA (For keyboard input)
@@ -85,7 +85,7 @@ StartExe	ORG $8000
 
 
 MainLoop
-		; TODO: backspace, enter. extra char. border wrap.
+		; TODO: backspace, enter. border wrap.
 
 		; Set screen address.
 		lda ScreenAddressHigh
@@ -93,8 +93,20 @@ MainLoop
 		lda ScreenAddressLow
 		sta $7FF1
 
-		jsr KBINPUT ; Wait for keyboard input, store ASCII code in A.
+		lda #$38		; Cursor.
 		sta $7F00		; Latch character to display.
+
+		jsr KBINPUT ; Wait for keyboard input, store ASCII code in A.
+
+		; Is it <enter>?
+		cmp #$80
+		bne NotEnter
+		; Move to start of next line.
+		jmp NonPrintable
+NotEnter
+
+		sta $7F00		; Latch character to display.
+NonPrintable
 
 		; Increment 16-bit screen address.
 		inc ScreenAddressLow
@@ -764,7 +776,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 19
                .byte $19               ; 1A zZ
                .byte $12               ; 1B sS
-               .byte $00               ; 1C aA
+               .byte $3B               ; 1C aA
                .byte $16               ; 1D wW
                .byte $1C               ; 1E 2@
                .byte $A1               ; 1F Windows 98 menu key (left side)
@@ -826,7 +838,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 57
                .byte $00               ; 58 caps
                .byte $00               ; 59 r shift
-               .byte $0D               ; 5A <Enter>
+               .byte $80               ; 5A <Enter>
                .byte $5D               ; 5B ]}
                .byte $00               ; 5C
                .byte $5C               ; 5D \|
@@ -895,7 +907,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 99
                .byte $5A               ; 9A zZ
                .byte $53               ; 9B sS
-               .byte $41               ; 9C aA
+               .byte $3B               ; 9C aA
                .byte $57               ; 9D wW
                .byte $34               ; 9E 2@
                .byte $E1               ; 9F Windows 98 menu key (left side)
@@ -957,7 +969,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; D7
                .byte $00               ; D8 caps
                .byte $00               ; D9 r shift
-               .byte $0D               ; DA <Enter>
+               .byte $80               ; DA <Enter>
                .byte $7D               ; DB ]}
                .byte $00               ; DC
                .byte $7C               ; DD \|

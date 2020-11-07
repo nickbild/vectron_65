@@ -32,13 +32,9 @@ special
 lastbyte
 		.byte #$00
 ; Display
-ScreenAddressLow
+ScreenColumn
 		.byte #$00
-ScreenAddressHigh
-		.byte #$00
-TempLow
-		.byte #$00
-TempHigh
+ScreenRow
 		.byte #$00
 
 
@@ -80,11 +76,11 @@ StartExe	ORG $8000
     ; Init the keyboard, LEDs, and flags.
     jsr   KBINIT
 
-		; Set initial screen address (0-1499).
-		lda #$00
-		sta ScreenAddressHigh
-		lda #$33
-		sta ScreenAddressLow
+		; Set initial screen address.
+		lda #$01
+		sta ScreenColumn
+		lda #$01
+		sta ScreenRow
 
     ; cli
 
@@ -93,12 +89,10 @@ MainLoop
 		; TODO: backspace, enter. border wrap.
 
 		; Set cursor address.
-		lda ScreenAddressHigh
+		lda ScreenRow
 		sta $7FF0
-		lda ScreenAddressLow
+		lda ScreenColumn
 		sta $7FF1
-
-		jsr CheckScreenEdges
 
 		lda #$38		; Cursor.
 		sta $7F00		; Latch character to display.
@@ -108,94 +102,32 @@ MainLoop
 		; Is it <enter>?
 		cmp #$80
 		bne NotEnter
-		; Enter - Move to start of next line.
+		; Enter.  Remove cursor.
+		lda #$39
+		sta $7F00
+		; Move to start of next line.
+		lda #$01
+		sta ScreenColumn
+		inc ScreenRow
+
 		jmp NonPrintable
 NotEnter
 
 		sta $7F00		; Latch character to display.
 
-		; Increment 16-bit screen address.
-		inc ScreenAddressLow
-		bne NoRollOver
-		inc ScreenAddressHigh
-NoRollOver
+		; Increment cursor position.
+		inc ScreenColumn
+		; Have we reached the end of a line?
+		lda #$31
+		cmp ScreenColumn
+		bne NoLineWrap
+		lda #$01
+		sta ScreenColumn
+		inc ScreenRow
+NoLineWrap
 
 NonPrintable
-
 		jmp MainLoop
-
-
-CheckScreenEdges
-		pha
-
-		; if ((cursor_position - 48) % 50) == 0:
-		;   cursor += 2
-
-		; Cursor position - 48
-		sec
-		lda ScreenAddressLow
-		sbc #$30
-		sta TempLow
-		lda ScreenAddressHigh
-		sbc #$00
-		sta TempHigh
-
-		; if Temp[Low,High] < 50, skip to end of routine.
-		; Prevents modulo subtraction from going negative.
-		lda TempHigh  ; Compare high bytes
-		cmp #$00
-		bcc CheckScreenEdgesDone
-		bne TempGTE50
-		lda TempLow  ; Compare low bytes
-		cmp #$32
-		bcc CheckScreenEdgesDone
-TempGTE50
-
-		; Modulo 50
-		sec
-Modulus
-		; Temp[Low,High] - 50
-		lda TempLow
-		sbc #$32
-		sta TempLow
-		lda TempHigh
-		sbc #$00
-		sta TempHigh
-		; Branches to Modulus if Temp[Low,High] >= 50
-		lda TempHigh
-		cmp #$00
-		bcc EndModCompare
-		bne Modulus
-		lda TempLow
-		cmp #$32
-   	bcs Modulus
-EndModCompare
-
-		; if Temp[Low,High] == 0
-		ldy TempLow
-		cpy #$00   ; Compare low bytes
-		bne NotEndOfLine
-		lda TempHigh
-		cmp #$00   ; Compare high bytes
-		beq EndOfLine
-NotEndOfLine
-		jmp CheckScreenEdgesDone
-
-EndOfLine
-		; Increment cursor twice.
-		inc ScreenAddressLow
-		bne NoRollOver1
-		inc ScreenAddressHigh
-NoRollOver1
-		inc ScreenAddressLow
-		bne NoRollOver2
-		inc ScreenAddressHigh
-NoRollOver2
-
-CheckScreenEdgesDone
-		pla
-
-		rts
 
 
 ; ~40ms @ 8MHz

@@ -86,8 +86,6 @@ StartExe	ORG $8000
 
 
 MainLoop
-		; TODO: backspace, enter. border wrap.
-
 		; Set cursor address.
 		lda ScreenRow
 		sta $7FF0
@@ -95,14 +93,18 @@ MainLoop
 		sta $7FF1
 
 		lda #$38		; Cursor.
-		sta $7F00		; Latch character to display.
+		sta $7F00		; Latch cursor to display.
 
 		jsr KBINPUT ; Wait for keyboard input, store ASCII code in A.
+
+		;;;;
+		; Handle special keys.
+		;;;;
 
 		; Is it <enter>?
 		cmp #$80
 		bne NotEnter
-		; Enter.  Remove cursor.
+		; Remove cursor.
 		lda #$39
 		sta $7F00
 		; Move to start of next line.
@@ -113,11 +115,42 @@ MainLoop
 		jmp NonPrintable
 NotEnter
 
+		; Is it backspace?
+		cmp #$81
+		bne NotBackSpace
+
+		; Remove cursor.
+		lda #$39
+		sta $7F00
+
+		dec ScreenColumn
+
+		lda ScreenColumn
+		cmp #$00
+		bne SkipBackSpaceLineWrap
+		lda ScreenRow
+		cmp #$01
+		beq BackSpaceRowOne
+		; Move cursor to end of previous line.
+		lda #$30
+		sta ScreenColumn
+		dec ScreenRow
+		jmp SkipBackSpaceLineWrap
+BackSpaceRowOne
+		inc ScreenColumn
+SkipBackSpaceLineWrap
+		jmp NonPrintable
+NotBackSpace
+
 		sta $7F00		; Latch character to display.
 
 		; Increment cursor position.
 		inc ScreenColumn
-		; Have we reached the end of a line?
+
+		;;;;
+		; Handle line wrapping.
+		;;;;
+
 		lda #$31
 		cmp ScreenColumn
 		bne NoLineWrap
@@ -863,7 +896,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 63
                .byte $00               ; 64
                .byte $00               ; 65
-               .byte $08               ; 66 bkspace
+               .byte $81               ; 66 bkspace
                .byte $00               ; 67
                .byte $00               ; 68
                .byte $31               ; 69 kp 1
@@ -994,7 +1027,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; E3
                .byte $00               ; E4
                .byte $00               ; E5
-               .byte $08               ; E6 bkspace
+               .byte $81               ; E6 bkspace
                .byte $00               ; E7
                .byte $00               ; E8
                .byte $91               ; E9 kp 1

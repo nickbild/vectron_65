@@ -92,7 +92,7 @@ MainLoop
 		lda ScreenColumn
 		sta $7FF1
 
-		lda #$38		; Cursor.
+		lda #$7F		; Cursor.
 		sta $7F00		; Latch cursor to display.
 
 		jsr KBINPUT ; Wait for keyboard input, store ASCII code in A.
@@ -102,10 +102,10 @@ MainLoop
 		;;;;
 
 		; Is it <enter>?
-		cmp #$80
+		cmp #$0D
 		bne NotEnter
 		; Remove cursor.
-		lda #$39
+		lda #$20
 		sta $7F00
 		; Move to start of next line.
 		lda #$01
@@ -116,11 +116,11 @@ MainLoop
 NotEnter
 
 		; Is it backspace?
-		cmp #$81
+		cmp #$08
 		bne NotBackSpace
 
 		; Remove cursor.
-		lda #$39
+		lda #$20
 		sta $7F00
 
 		dec ScreenColumn
@@ -815,76 +815,76 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 12 left shift
                .byte $E0               ; 13 relocated Alt release code
                .byte $00               ; 14 left ctrl (right ctrl too)
-               .byte $10               ; 15 qQ
-               .byte $1B               ; 16 1!
+               .byte $71               ; 15 qQ
+               .byte $31               ; 16 1!
                .byte $00               ; 17
                .byte $00               ; 18
                .byte $00               ; 19
-               .byte $19               ; 1A zZ
-               .byte $12               ; 1B sS
-               .byte $3B               ; 1C aA
-               .byte $16               ; 1D wW
-               .byte $1C               ; 1E 2@
+               .byte $7A               ; 1A zZ
+               .byte $73               ; 1B sS
+               .byte $61               ; 1C aA
+               .byte $77               ; 1D wW
+               .byte $32               ; 1E 2@
                .byte $A1               ; 1F Windows 98 menu key (left side)
                .byte $02               ; 20 relocated ctrl-break key
-               .byte $02               ; 21 cC
-               .byte $17               ; 22 xX
-               .byte $03               ; 23 dD
-               .byte $04               ; 24 eE
-               .byte $1E               ; 25 4$
-               .byte $1D               ; 26 3#
+               .byte $63               ; 21 cC
+               .byte $78               ; 22 xX
+               .byte $64               ; 23 dD
+               .byte $65               ; 24 eE
+               .byte $34               ; 25 4$
+               .byte $33               ; 26 3#
                .byte $A2               ; 27 Windows 98 menu key (right side)
                .byte $00               ; 28
-               .byte $39               ; 29 space
-               .byte $15               ; 2A vV
-               .byte $05               ; 2B fF
-               .byte $13               ; 2C tT
-               .byte $11               ; 2D rR
-               .byte $1F               ; 2E 5%
+               .byte $20               ; 29 space
+               .byte $76               ; 2A vV
+               .byte $66               ; 2B fF
+               .byte $74               ; 2C tT
+               .byte $72               ; 2D rR
+               .byte $35               ; 2E 5%
                .byte $A3               ; 2F Windows 98 option key (right click, right side)
                .byte $00               ; 30
-               .byte $0D               ; 31 nN
-               .byte $01               ; 32 bB
-               .byte $07               ; 33 hH
-               .byte $06               ; 34 gG
-               .byte $18               ; 35 yY
-               .byte $20               ; 36 6^
+               .byte $6E               ; 31 nN
+               .byte $62               ; 32 bB
+               .byte $68               ; 33 hH
+               .byte $67               ; 34 gG
+               .byte $79               ; 35 yY
+               .byte $36               ; 36 6^
                .byte $00               ; 37
                .byte $00               ; 38
                .byte $00               ; 39
-               .byte $0C               ; 3A mM
-               .byte $09               ; 3B jJ
-               .byte $14               ; 3C uU
-               .byte $21               ; 3D 7&
-               .byte $22               ; 3E 8*
+               .byte $6D               ; 3A mM
+               .byte $6A               ; 3B jJ
+               .byte $75               ; 3C uU
+               .byte $37               ; 3D 7&
+               .byte $38               ; 3E 8*
                .byte $00               ; 3F
                .byte $00               ; 40
-               .byte $25               ; 41 ,<
-               .byte $0A               ; 42 kK
-               .byte $08               ; 43 iI
-               .byte $0E               ; 44 oO
-               .byte $1A               ; 45 0)
-               .byte $23               ; 46 9(
+               .byte $2C               ; 41 ,<
+               .byte $6B               ; 42 kK
+               .byte $69               ; 43 iI
+               .byte $6F               ; 44 oO
+               .byte $30               ; 45 0)
+               .byte $39               ; 46 9(
                .byte $00               ; 47
                .byte $00               ; 48
-               .byte $24               ; 49 .>
+               .byte $2E               ; 49 .>
                .byte $2F               ; 4A /?
-               .byte $0B               ; 4B lL
-               .byte $32               ; 4C ;:
-               .byte $0F               ; 4D pP
+               .byte $6C               ; 4B lL
+               .byte $3B               ; 4C ;:
+               .byte $70               ; 4D pP
                .byte $2D               ; 4E -_
                .byte $00               ; 4F
                .byte $00               ; 50
                .byte $00               ; 51
-               .byte $30               ; 52 '"
+               .byte $27               ; 52 '"
                .byte $00               ; 53
                .byte $5B               ; 54 [{
-               .byte $33               ; 55 =+
+               .byte $3D               ; 55 =+
                .byte $00               ; 56
                .byte $00               ; 57
                .byte $00               ; 58 caps
                .byte $00               ; 59 r shift
-               .byte $80               ; 5A <Enter>
+               .byte $0D               ; 5A <Enter>
                .byte $5D               ; 5B ]}
                .byte $00               ; 5C
                .byte $5C               ; 5D \|
@@ -896,7 +896,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; 63
                .byte $00               ; 64
                .byte $00               ; 65
-               .byte $81               ; 66 bkspace
+               .byte $08               ; 66 bkspace
                .byte $00               ; 67
                .byte $00               ; 68
                .byte $31               ; 69 kp 1
@@ -947,31 +947,31 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $E0               ; 93 relocated Alt release code
                .byte $00               ; 94 left ctrl (and right ctrl)
                .byte $51               ; 95 qQ
-               .byte $26               ; 96 1!
+               .byte $21               ; 96 1!
                .byte $00               ; 97
                .byte $00               ; 98
                .byte $00               ; 99
                .byte $5A               ; 9A zZ
                .byte $53               ; 9B sS
-               .byte $3B               ; 9C aA
+               .byte $41               ; 9C aA
                .byte $57               ; 9D wW
-               .byte $34               ; 9E 2@
+               .byte $40               ; 9E 2@
                .byte $E1               ; 9F Windows 98 menu key (left side)
                .byte $02               ; A0 relocated ctrl-break key
                .byte $43               ; A1 cC
                .byte $58               ; A2 xX
                .byte $44               ; A3 dD
                .byte $45               ; A4 eE
-               .byte $29               ; A5 4$
-               .byte $28               ; A6 3#
+               .byte $24               ; A5 4$
+               .byte $23               ; A6 3#
                .byte $E2               ; A7 Windows 98 menu key (right side)
                .byte $00               ; A8
-               .byte $39               ; A9 space
+               .byte $20               ; A9 space
                .byte $56               ; AA vV
                .byte $46               ; AB fF
                .byte $54               ; AC tT
                .byte $52               ; AD rR
-               .byte $36               ; AE 5%
+               .byte $25               ; AE 5%
                .byte $E3               ; AF Windows 98 option key (right click, right side)
                .byte $00               ; B0
                .byte $4E               ; B1 nN
@@ -979,7 +979,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $48               ; B3 hH
                .byte $47               ; B4 gG
                .byte $59               ; B5 yY
-               .byte $37               ; B6 6^
+               .byte $5E               ; B6 6^
                .byte $00               ; B7
                .byte $00               ; B8
                .byte $00               ; B9
@@ -987,35 +987,35 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $4A               ; BB jJ
                .byte $55               ; BC uU
                .byte $26               ; BD 7&
-               .byte $2E               ; BE 8*
+               .byte $2A               ; BE 8*
                .byte $00               ; BF
                .byte $00               ; C0
                .byte $3C               ; C1 ,<
                .byte $4B               ; C2 kK
                .byte $49               ; C3 iI
                .byte $4F               ; C4 oO
-               .byte $2B               ; C5 0)
-               .byte $2A               ; C6 9(
+               .byte $29               ; C5 0)
+               .byte $28               ; C6 9(
                .byte $00               ; C7
                .byte $00               ; C8
                .byte $3E               ; C9 .>
-               .byte $35               ; CA /?
+               .byte $3F               ; CA /?
                .byte $4C               ; CB lL
-               .byte $31               ; CC ;:
+               .byte $3A               ; CC ;:
                .byte $50               ; CD pP
                .byte $5F               ; CE -_
                .byte $00               ; CF
                .byte $00               ; D0
                .byte $00               ; D1
-               .byte $27               ; D2 '"
+               .byte $22               ; D2 '"
                .byte $00               ; D3
                .byte $7B               ; D4 [{
-               .byte $2C               ; D5 =+
+               .byte $2B               ; D5 =+
                .byte $00               ; D6
                .byte $00               ; D7
                .byte $00               ; D8 caps
                .byte $00               ; D9 r shift
-               .byte $80               ; DA <Enter>
+               .byte $0D               ; DA <Enter>
                .byte $7D               ; DB ]}
                .byte $00               ; DC
                .byte $7C               ; DD \|
@@ -1027,7 +1027,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $00               ; E3
                .byte $00               ; E4
                .byte $00               ; E5
-               .byte $81               ; E6 bkspace
+               .byte $08               ; E6 bkspace
                .byte $00               ; E7
                .byte $00               ; E8
                .byte $91               ; E9 kp 1
@@ -1049,7 +1049,7 @@ ASCIITBL       .byte $00               ; 00 no key pressed
                .byte $2B               ; F9 kp +
                .byte $93               ; FA kp 3
                .byte $2D               ; FB kp -
-               .byte $2D               ; FC kp *
+               .byte $2A               ; FC kp *
                .byte $99               ; FD kp 9
                .byte $CD               ; FE scroll lock
 ; NOT USED     .byte $00               ; FF

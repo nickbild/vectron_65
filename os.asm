@@ -233,6 +233,7 @@ NonPrintable
 
 ; Tiny Basic break.
 BREAK
+		clc		; Never break.
 
 		rts
 
@@ -2265,6 +2266,6 @@ ILTBL    .byte $24, $3E, $91, $27, $10, $E1, $59, $C5, $2A, $56, $10, $11, $2C, 
 ; End of Tiny Basic
 
 MBLK
-         .byte  "              vectron 65 basic"
+         .byte  "               vectron 65 basic"
 				 .byte  $0D
          .byte  $FF

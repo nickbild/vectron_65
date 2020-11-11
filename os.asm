@@ -6,8 +6,37 @@
 ; Reserved memory:
 ;
 ; $0000-$7EFF - RAM
-; 		$0000-$0005 - Named variables
+; 		$0000-$0006 - Named variables
 ; 		$0100-$01FF - 6502 stack
+;     $0200-$     - Tiny Basic
+;     $5101-$5130 - Display row 1
+;     $5201-$5230 - Display row 2
+;     $5301-$5330 - Display row 3
+;     $5401-$5430 - Display row 4
+;     $5501-$5530 - Display row 5
+;     $5601-$5630 - Display row 6
+;     $5701-$5730 - Display row 7
+;     $5801-$5830 - Display row 8
+;     $5901-$5930 - Display row 9
+;     $5A01-$5A30 - Display row 10
+;     $5B01-$5B30 - Display row 11
+;     $5C01-$5C30 - Display row 12
+;     $5D01-$5D30 - Display row 13
+;     $5E01-$5E30 - Display row 14
+;     $5F01-$5F30 - Display row 15
+;     $6001-$6030 - Display row 16
+;     $6101-$6130 - Display row 17
+;     $6201-$6230 - Display row 18
+;     $6301-$6330 - Display row 19
+;     $6401-$6430 - Display row 20
+;     $6501-$6530 - Display row 21
+;     $6601-$6630 - Display row 22
+;     $6701-$6730 - Display row 23
+;     $6801-$6830 - Display row 24
+;     $6901-$6930 - Display row 25
+;     $6A01-$6A30 - Display row 26
+;     $6B01-$6B30 - Display row 27
+;     $6C01-$6C30 - Display row 28
 ; $7F00 - Display Interrupt
 ; $7FE0-$7FEF - 6522 VIA (For keyboard input)
 ; $7FF0-$7FFF - 6522 VIA (For VGA display)
@@ -34,6 +63,8 @@ lastbyte
 ScreenColumn
 		.byte #$00
 ScreenRow
+		.byte #$00
+Temp
 		.byte #$00
 
 
@@ -74,6 +105,9 @@ StartExe	ORG $8000
 
     ; Init the keyboard, LEDs, and flags.
     jsr   KBINIT
+
+		; Set all screen memory to spaces (blank)
+		jsr ClearScreenMemory
 
 		; Set initial screen address.
 		lda #$01
@@ -187,6 +221,15 @@ NotBackSpace
 		sta ScreenColumn
 		inc ScreenRow
 
+		lda ScreenRow
+		cmp #$1D
+		bne NoScreenScroll
+		jsr ScrollScreenDataUp
+		jsr RedrawScreen
+		lda #$1C
+		sta ScreenRow
+NoScreenScroll
+
 		; Set cursor address.
 		lda ScreenRow
 		sta $7FF0
@@ -200,6 +243,8 @@ NotBackSpace
 NotEnter
 
 		sta $7F00		; Latch ASCII in A to display.
+		sta Temp
+		jsr SaveCharacter
 
 		; Advance cursor and handle screen wrapping.
 		inc ScreenColumn
@@ -229,6 +274,895 @@ NonPrintable
 ; Tiny Basic break.
 BREAK
 		clc		; Never break.
+
+		rts
+
+
+SaveCharacter
+		lda ScreenRow
+		ldx ScreenColumn
+
+		; Row 1
+		cmp #$01
+		bne NotRow1
+		lda Temp
+		sta $5100,x
+		jmp DoneSavingCharacter
+NotRow1
+
+		; Row 2
+		cmp #$02
+		bne NotRow2
+		lda Temp
+		sta $5200,x
+		jmp DoneSavingCharacter
+NotRow2
+
+		; Row 3
+		cmp #$03
+		bne NotRow3
+		lda Temp
+		sta $5300,x
+		jmp DoneSavingCharacter
+NotRow3
+
+		; Row 4
+		cmp #$04
+		bne NotRow4
+		lda Temp
+		sta $5400,x
+		jmp DoneSavingCharacter
+NotRow4
+
+		; Row 5
+		cmp #$05
+		bne NotRow5
+		lda Temp
+		sta $5500,x
+		jmp DoneSavingCharacter
+NotRow5
+
+		; Row 6
+		cmp #$06
+		bne NotRow6
+		lda Temp
+		sta $5600,x
+		jmp DoneSavingCharacter
+NotRow6
+
+		; Row 7
+		cmp #$07
+		bne NotRow7
+		lda Temp
+		sta $5700,x
+		jmp DoneSavingCharacter
+NotRow7
+
+		; Row 8
+		cmp #$08
+		bne NotRow8
+		lda Temp
+		sta $5800,x
+		jmp DoneSavingCharacter
+NotRow8
+
+		; Row 9
+		cmp #$09
+		bne NotRow9
+		lda Temp
+		sta $5900,x
+		jmp DoneSavingCharacter
+NotRow9
+
+		; Row 10
+		cmp #$0A
+		bne NotRow10
+		lda Temp
+		sta $5A00,x
+		jmp DoneSavingCharacter
+NotRow10
+
+		; Row 11
+		cmp #$0B
+		bne NotRow11
+		lda Temp
+		sta $5B00,x
+		jmp DoneSavingCharacter
+NotRow11
+
+		; Row 12
+		cmp #$0C
+		bne NotRow12
+		lda Temp
+		sta $5C00,x
+		jmp DoneSavingCharacter
+NotRow12
+
+		; Row 13
+		cmp #$0D
+		bne NotRow13
+		lda Temp
+		sta $5D00,x
+		jmp DoneSavingCharacter
+NotRow13
+
+		; Row 14
+		cmp #$0E
+		bne NotRow14
+		lda Temp
+		sta $5E00,x
+		jmp DoneSavingCharacter
+NotRow14
+
+		; Row 15
+		cmp #$0F
+		bne NotRow15
+		lda Temp
+		sta $5F00,x
+		jmp DoneSavingCharacter
+NotRow15
+
+		; Row 16
+		cmp #$10
+		bne NotRow16
+		lda Temp
+		sta $6000,x
+		jmp DoneSavingCharacter
+NotRow16
+
+		; Row 17
+		cmp #$11
+		bne NotRow17
+		lda Temp
+		sta $6100,x
+		jmp DoneSavingCharacter
+NotRow17
+
+		; Row 18
+		cmp #$12
+		bne NotRow18
+		lda Temp
+		sta $6200,x
+		jmp DoneSavingCharacter
+NotRow18
+
+		; Row 19
+		cmp #$13
+		bne NotRow19
+		lda Temp
+		sta $6300,x
+		jmp DoneSavingCharacter
+NotRow19
+
+		; Row 20
+		cmp #$14
+		bne NotRow20
+		lda Temp
+		sta $6400,x
+		jmp DoneSavingCharacter
+NotRow20
+
+		; Row 21
+		cmp #$15
+		bne NotRow21
+		lda Temp
+		sta $6500,x
+		jmp DoneSavingCharacter
+NotRow21
+
+		; Row 22
+		cmp #$16
+		bne NotRow22
+		lda Temp
+		sta $6600,x
+		jmp DoneSavingCharacter
+NotRow22
+
+		; Row 23
+		cmp #$17
+		bne NotRow23
+		lda Temp
+		sta $6700,x
+		jmp DoneSavingCharacter
+NotRow23
+
+		; Row 24
+		cmp #$18
+		bne NotRow24
+		lda Temp
+		sta $6800,x
+		jmp DoneSavingCharacter
+NotRow24
+
+		; Row 25
+		cmp #$19
+		bne NotRow25
+		lda Temp
+		sta $6900,x
+		jmp DoneSavingCharacter
+NotRow25
+
+		; Row 26
+		cmp #$1A
+		bne NotRow26
+		lda Temp
+		sta $6A00,x
+		jmp DoneSavingCharacter
+NotRow26
+
+		; Row 27
+		cmp #$1B
+		bne NotRow27
+		lda Temp
+		sta $6B00,x
+		jmp DoneSavingCharacter
+NotRow27
+
+		; Row 28
+		cmp #$1C
+		bne NotRow28
+		lda Temp
+		sta $6C00,x
+		jmp DoneSavingCharacter
+NotRow28
+
+DoneSavingCharacter
+		rts
+
+
+ScrollScreenDataUp
+		ldx #$30
+Row2to1
+		lda $5200,x
+		sta $5100,x
+		dex
+		bne Row2to1
+
+		ldx #$30
+Row3to2
+		lda $5300,x
+		sta $5200,x
+		dex
+		bne Row3to2
+
+		ldx #$30
+Row4to3
+		lda $5400,x
+		sta $5300,x
+		dex
+		bne Row4to3
+
+		ldx #$30
+Row5to4
+		lda $5500,x
+		sta $5400,x
+		dex
+		bne Row5to4
+
+		ldx #$30
+Row6to5
+		lda $5600,x
+		sta $5500,x
+		dex
+		bne Row6to5
+
+		ldx #$30
+Row7to6
+		lda $5700,x
+		sta $5600,x
+		dex
+		bne Row7to6
+
+		ldx #$30
+Row8to7
+		lda $5800,x
+		sta $5700,x
+		dex
+		bne Row8to7
+
+		ldx #$30
+Row9to8
+		lda $5900,x
+		sta $5800,x
+		dex
+		bne Row9to8
+
+		ldx #$30
+Row10to9
+		lda $5A00,x
+		sta $5900,x
+		dex
+		bne Row10to9
+
+		ldx #$30
+Row11to10
+		lda $5B00,x
+		sta $5A00,x
+		dex
+		bne Row11to10
+
+		ldx #$30
+Row12to11
+		lda $5C00,x
+		sta $5B00,x
+		dex
+		bne Row12to11
+
+		ldx #$30
+Row13to12
+		lda $5D00,x
+		sta $5C00,x
+		dex
+		bne Row13to12
+
+		ldx #$30
+Row14to13
+		lda $5E00,x
+		sta $5D00,x
+		dex
+		bne Row14to13
+
+		ldx #$30
+Row15to14
+		lda $5F00,x
+		sta $5E00,x
+		dex
+		bne Row15to14
+
+		ldx #$30
+Row16to15
+		lda $6000,x
+		sta $5F00,x
+		dex
+		bne Row16to15
+
+		ldx #$30
+Row17to16
+		lda $6100,x
+		sta $6000,x
+		dex
+		bne Row17to16
+
+		ldx #$30
+Row18to17
+		lda $6200,x
+		sta $6100,x
+		dex
+		bne Row18to17
+
+		ldx #$30
+Row19to18
+		lda $6300,x
+		sta $6200,x
+		dex
+		bne Row19to18
+
+		ldx #$30
+Row20to19
+		lda $6400,x
+		sta $6300,x
+		dex
+		bne Row20to19
+
+		ldx #$30
+Row21to20
+		lda $6500,x
+		sta $6400,x
+		dex
+		bne Row21to20
+
+		ldx #$30
+Row22to21
+		lda $6600,x
+		sta $6500,x
+		dex
+		bne Row22to21
+
+		ldx #$30
+Row23to22
+		lda $6700,x
+		sta $6600,x
+		dex
+		bne Row23to22
+
+		ldx #$30
+Row24to23
+		lda $6800,x
+		sta $6700,x
+		dex
+		bne Row24to23
+
+		ldx #$30
+Row25to24
+		lda $6900,x
+		sta $6800,x
+		dex
+		bne Row25to24
+
+		ldx #$30
+Row26to25
+		lda $6A00,x
+		sta $6900,x
+		dex
+		bne Row26to25
+
+		ldx #$30
+Row27to26
+		lda $6B00,x
+		sta $6A00,x
+		dex
+		bne Row27to26
+
+		ldx #$30
+Row28to27
+		lda $6C00,x
+		sta $6B00,x
+		dex
+		bne Row28to27
+
+		lda #$20 ; Space
+		ldx #$30
+Clear28
+		sta $6C00,x
+		dex
+		bne Clear28
+
+		rts
+
+ClearScreenMemory
+		lda #$20 ; Space
+
+		ldx #$30
+ClearScreen1
+		sta $5100,x
+		dex
+		bne ClearScreen1
+
+		ldx #$30
+ClearScreen2
+		sta $5200,x
+		dex
+		bne ClearScreen2
+
+		ldx #$30
+ClearScreen3
+		sta $5300,x
+		dex
+		bne ClearScreen3
+
+		ldx #$30
+ClearScreen4
+		sta $5400,x
+		dex
+		bne ClearScreen4
+
+		ldx #$30
+ClearScreen5
+		sta $5500,x
+		dex
+		bne ClearScreen5
+
+		ldx #$30
+ClearScreen6
+		sta $5600,x
+		dex
+		bne ClearScreen6
+
+		ldx #$30
+ClearScreen7
+		sta $5700,x
+		dex
+		bne ClearScreen7
+
+		ldx #$30
+ClearScreen8
+		sta $5800,x
+		dex
+		bne ClearScreen8
+
+		ldx #$30
+ClearScreen9
+		sta $5900,x
+		dex
+		bne ClearScreen9
+
+		ldx #$30
+ClearScreen10
+		sta $5A00,x
+		dex
+		bne ClearScreen10
+
+		ldx #$30
+ClearScreen11
+		sta $5B00,x
+		dex
+		bne ClearScreen11
+
+		ldx #$30
+ClearScreen12
+		sta $5C00,x
+		dex
+		bne ClearScreen12
+
+		ldx #$30
+ClearScreen13
+		sta $5D00,x
+		dex
+		bne ClearScreen13
+
+		ldx #$30
+ClearScreen14
+		sta $5E00,x
+		dex
+		bne ClearScreen14
+
+		ldx #$30
+ClearScreen15
+		sta $5F00,x
+		dex
+		bne ClearScreen15
+
+		ldx #$30
+ClearScreen16
+		sta $6000,x
+		dex
+		bne ClearScreen16
+
+		ldx #$30
+ClearScreen17
+		sta $6100,x
+		dex
+		bne ClearScreen17
+
+		ldx #$30
+ClearScreen18
+		sta $6200,x
+		dex
+		bne ClearScreen18
+
+		ldx #$30
+ClearScreen19
+		sta $6300,x
+		dex
+		bne ClearScreen19
+
+		ldx #$30
+ClearScreen20
+		sta $6400,x
+		dex
+		bne ClearScreen20
+
+		ldx #$30
+ClearScreen21
+		sta $6500,x
+		dex
+		bne ClearScreen21
+
+		ldx #$30
+ClearScreen22
+		sta $6600,x
+		dex
+		bne ClearScreen22
+
+		ldx #$30
+ClearScreen23
+		sta $6700,x
+		dex
+		bne ClearScreen23
+
+		ldx #$30
+ClearScreen24
+		sta $6800,x
+		dex
+		bne ClearScreen24
+
+		ldx #$30
+ClearScreen25
+		sta $6900,x
+		dex
+		bne ClearScreen25
+
+		ldx #$30
+ClearScreen26
+		sta $6A00,x
+		dex
+		bne ClearScreen26
+
+		ldx #$30
+ClearScreen27
+		sta $6B00,x
+		dex
+		bne ClearScreen27
+
+		ldx #$30
+ClearScreen28
+		sta $6C00,x
+		dex
+		bne ClearScreen28
+
+		rts
+
+
+RedrawScreen
+		lda #$01
+		sta $7FF0
+		ldx #$30
+RedrawRow1
+		stx $7FF1
+		lda $5100,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow1
+
+		lda #$02
+		sta $7FF0
+		ldx #$30
+RedrawRow2
+		stx $7FF1
+		lda $5200,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow2
+
+		lda #$03
+		sta $7FF0
+		ldx #$30
+RedrawRow3
+		stx $7FF1
+		lda $5300,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow3
+
+		lda #$04
+		sta $7FF0
+		ldx #$30
+RedrawRow4
+		stx $7FF1
+		lda $5400,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow4
+
+		lda #$05
+		sta $7FF0
+		ldx #$30
+RedrawRow5
+		stx $7FF1
+		lda $5500,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow5
+
+		lda #$06
+		sta $7FF0
+		ldx #$30
+RedrawRow6
+		stx $7FF1
+		lda $5600,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow6
+
+		lda #$07
+		sta $7FF0
+		ldx #$30
+RedrawRow7
+		stx $7FF1
+		lda $5700,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow7
+
+		lda #$08
+		sta $7FF0
+		ldx #$30
+RedrawRow8
+		stx $7FF1
+		lda $5800,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow8
+
+		lda #$09
+		sta $7FF0
+		ldx #$30
+RedrawRow9
+		stx $7FF1
+		lda $5900,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow9
+
+		lda #$0A
+		sta $7FF0
+		ldx #$30
+RedrawRow10
+		stx $7FF1
+		lda $5A00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow10
+
+		lda #$0B
+		sta $7FF0
+		ldx #$30
+RedrawRow11
+		stx $7FF1
+		lda $5B00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow11
+
+		lda #$0C
+		sta $7FF0
+		ldx #$30
+RedrawRow12
+		stx $7FF1
+		lda $5C00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow12
+
+		lda #$0D
+		sta $7FF0
+		ldx #$30
+RedrawRow13
+		stx $7FF1
+		lda $5D00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow13
+
+		lda #$0E
+		sta $7FF0
+		ldx #$30
+RedrawRow14
+		stx $7FF1
+		lda $5E00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow14
+
+		lda #$0F
+		sta $7FF0
+		ldx #$30
+RedrawRow15
+		stx $7FF1
+		lda $5F00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow15
+
+		lda #$10
+		sta $7FF0
+		ldx #$30
+RedrawRow16
+		stx $7FF1
+		lda $6000,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow16
+
+		lda #$11
+		sta $7FF0
+		ldx #$30
+RedrawRow17
+		stx $7FF1
+		lda $6100,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow17
+
+		lda #$12
+		sta $7FF0
+		ldx #$30
+RedrawRow18
+		stx $7FF1
+		lda $6200,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow18
+
+		lda #$13
+		sta $7FF0
+		ldx #$30
+RedrawRow19
+		stx $7FF1
+		lda $6300,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow19
+
+		lda #$14
+		sta $7FF0
+		ldx #$30
+RedrawRow20
+		stx $7FF1
+		lda $6400,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow20
+
+		lda #$15
+		sta $7FF0
+		ldx #$30
+RedrawRow21
+		stx $7FF1
+		lda $6500,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow21
+
+		lda #$16
+		sta $7FF0
+		ldx #$30
+RedrawRow22
+		stx $7FF1
+		lda $6600,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow22
+
+		lda #$17
+		sta $7FF0
+		ldx #$30
+RedrawRow23
+		stx $7FF1
+		lda $6700,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow23
+
+		lda #$18
+		sta $7FF0
+		ldx #$30
+RedrawRow24
+		stx $7FF1
+		lda $6800,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow24
+
+		lda #$19
+		sta $7FF0
+		ldx #$30
+RedrawRow25
+		stx $7FF1
+		lda $6900,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow25
+
+		lda #$1A
+		sta $7FF0
+		ldx #$30
+RedrawRow26
+		stx $7FF1
+		lda $6A00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow26
+
+		lda #$1B
+		sta $7FF0
+		ldx #$30
+RedrawRow27
+		stx $7FF1
+		lda $6B00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow27
+
+		lda #$1C
+		sta $7FF0
+		ldx #$30
+RedrawRow28
+		stx $7FF1
+		lda $6C00,x
+		sta $7F00		; Latch ASCII in A to display.
+		dex
+		bne RedrawRow28
 
 		rts
 

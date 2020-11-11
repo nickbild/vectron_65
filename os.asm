@@ -217,6 +217,57 @@ RCCHR
 SNDCHR
 		pha
 
+		; Is it backspace?
+		cmp #$08
+		bne NotBackSpace
+
+		; Remove cursor.
+		lda #$20
+		sta $7F00
+
+		dec ScreenColumn
+
+		lda ScreenColumn
+		cmp #$00
+		bne SkipBackSpaceLineWrap
+		lda ScreenRow
+		cmp #$01
+		beq BackSpaceRowOne
+		; Move cursor to end of previous line.
+		lda #$30
+		sta ScreenColumn
+		dec ScreenRow
+		jmp SkipBackSpaceLineWrap
+BackSpaceRowOne
+		inc ScreenColumn
+SkipBackSpaceLineWrap
+
+		; Remove cursor.
+		lda #$20
+		sta $7F00
+
+		; Set cursor address.
+		lda ScreenRow
+		sta $7FF0
+		lda ScreenColumn
+		sta $7FF1
+
+		lda #$7F		; Cursor.
+		sta $7F00		; Latch cursor to display.
+
+		jmp NonPrintable
+NotBackSpace
+
+		; Control char?
+		cmp #$0B
+		bcc NonPrintable ; if < $0B, skip output.
+		cmp #$0E
+		beq NonPrintable
+		cmp #$11
+		beq NonPrintable
+		cmp #$91
+		beq NonPrintable
+
 		; Enter?
 		cmp #$0D
 		bne NotEnter
@@ -1168,7 +1219,7 @@ BV       JMP      BREAK             ; Begin break routine
 ;
 BSC      .byte $08                   ; Backspace code
 LSC      .byte $1B                   ; Line cancel code (ESC)
-PCC      .byte $80                   ; Pad character control
+PCC      .byte $00                   ; Pad character control
 TMC      .byte $00                   ; Tape mode control
 SSS      .byte $20                   ; Spare Stack size. (was $04 but documentation suggests $20)
 
@@ -1868,6 +1919,7 @@ LBL088   jsr LBL087                 ; Go print pad character
          bne LBL088                 ; Loop until 0
 LBL086   lda #$0A                   ; Load up a LF
          jmp LBL089                 ; Go print it
+
 ;
 ;
 ;

@@ -89,20 +89,9 @@ StartExe	ORG $8000
 		sta $7FF1
 
 
-FBLK     ;jsr CLRSC                  ; Go clear the screen
-         ldx #$00                   ; Offset for welcome message and prompt
+FBLK     ldx #$00                   ; Offset for welcome message and prompt
          jsr SNDMSG                 ; Go print it
 				 jmp COLD_S									; Cold start.
-; ST_LP    jsr RCCHR                  ; Go get a character from the console
-;          cmp #$63                   ; Check for 'c'
-;          bne IS_WRM                 ; If not branch to next check
-;          jmp COLD_S                 ; Otherwise cold-start Tiny Basic
-; IS_WRM   cmp #$77                   ; Check for 'w'
-;          bne PRMPT                  ; If not, branch to re-prompt them
-;          jmp WARM_S                 ; Otherwise warm-start Tiny Basic
-; PRMPT    LDX #$12                   ; Offset of prompt in message block
-;          jsr SNDMSG                 ; Go print the prompt
-;          jmp ST_LP                  ; Go get the response
 
 
 SNDMSG   lda MBLK,X                 ; Get a character from the message block
@@ -177,7 +166,13 @@ NotBackSpace
 		beq NonPrintable
 		cmp #$11
 		beq NonPrintable
+		cmp #$80
+		beq NonPrintable
 		cmp #$91
+		beq NonPrintable
+		cmp #$93
+		beq NonPrintable
+		cmp #$FF
 		beq NonPrintable
 
 		; Enter?

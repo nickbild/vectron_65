@@ -83,120 +83,26 @@ StartExe	ORG $8000
 
     cli
 
-
 		lda ScreenRow
 		sta $7FF0
 		lda ScreenColumn
 		sta $7FF1
+
+
 FBLK     ;jsr CLRSC                  ; Go clear the screen
          ldx #$00                   ; Offset for welcome message and prompt
          jsr SNDMSG                 ; Go print it
-ST_LP    jsr RCCHR                  ; Go get a character from the console
-         cmp #$63                   ; Check for 'c'
-         bne IS_WRM                 ; If not branch to next check
-         jmp COLD_S                 ; Otherwise cold-start Tiny Basic
-IS_WRM   cmp #$77                   ; Check for 'w'
-         bne PRMPT                  ; If not, branch to re-prompt them
-         jmp WARM_S                 ; Otherwise warm-start Tiny Basic
-PRMPT    LDX #$12                   ; Offset of prompt in message block
-         jsr SNDMSG                 ; Go print the prompt
-         jmp ST_LP                  ; Go get the response
-
-
-; MainLoop
-; 		; Set cursor address.
-; 		lda ScreenRow
-; 		sta $7FF0
-; 		lda ScreenColumn
-; 		sta $7FF1
-;
-; 		lda #$7F		; Cursor.
-; 		sta $7F00		; Latch cursor to display.
-;
-; 		jsr KBINPUT ; Wait for keyboard input, store ASCII code in A.
-;
-; 		;;;;
-; 		; Handle special keys.
-; 		;;;;
-;
-; 		; Is it <enter>?
-; 		cmp #$0D
-; 		bne NotEnter
-; 		; Remove cursor.
-; 		lda #$20
-; 		sta $7F00
-; 		; Move to start of next line.
-; 		lda #$01
-; 		sta ScreenColumn
-; 		inc ScreenRow
-;
-; 		jmp NonPrintable
-; NotEnter
-;
-; 		; Is it backspace?
-; 		cmp #$08
-; 		bne NotBackSpace
-;
-; 		; Remove cursor.
-; 		lda #$20
-; 		sta $7F00
-;
-; 		dec ScreenColumn
-;
-; 		lda ScreenColumn
-; 		cmp #$00
-; 		bne SkipBackSpaceLineWrap
-; 		lda ScreenRow
-; 		cmp #$01
-; 		beq BackSpaceRowOne
-; 		; Move cursor to end of previous line.
-; 		lda #$30
-; 		sta ScreenColumn
-; 		dec ScreenRow
-; 		jmp SkipBackSpaceLineWrap
-; BackSpaceRowOne
-; 		inc ScreenColumn
-; SkipBackSpaceLineWrap
-; 		jmp NonPrintable
-; NotBackSpace
-;
-; 		sta $7F00		; Latch character to display.
-;
-; 		; Increment cursor position.
-; 		inc ScreenColumn
-;
-; 		;;;;
-; 		; Handle line wrapping.
-; 		;;;;
-;
-; 		lda #$31
-; 		cmp ScreenColumn
-; 		bne NoLineWrap
-; 		lda #$01
-; 		sta ScreenColumn
-; 		inc ScreenRow
-; NoLineWrap
-;
-; NonPrintable
-; 		jmp MainLoop
-;
-;
-; ; ~40ms @ 8MHz
-; Delay
-; 		.byte #$DA ; phx
-; 		.byte #$5A ; phy
-;
-; 		ldx #$FF
-; DelayLoop1	ldy #$FF
-; DelayLoop2	dey
-; 		bne DelayLoop2
-; 		dex
-; 		bne DelayLoop1
-;
-; 		.byte #$7A ; ply
-; 		.byte #$FA ; plx
-;
-; 		rts
+				 jmp COLD_S									; Cold start.
+; ST_LP    jsr RCCHR                  ; Go get a character from the console
+;          cmp #$63                   ; Check for 'c'
+;          bne IS_WRM                 ; If not branch to next check
+;          jmp COLD_S                 ; Otherwise cold-start Tiny Basic
+; IS_WRM   cmp #$77                   ; Check for 'w'
+;          bne PRMPT                  ; If not, branch to re-prompt them
+;          jmp WARM_S                 ; Otherwise warm-start Tiny Basic
+; PRMPT    LDX #$12                   ; Offset of prompt in message block
+;          jsr SNDMSG                 ; Go print the prompt
+;          jmp ST_LP                  ; Go get the response
 
 
 SNDMSG   lda MBLK,X                 ; Get a character from the message block
@@ -212,6 +118,12 @@ EXSM     rts                        ; Return
 ; Runs into SNDCHR for echo.
 RCCHR
 		jsr KBINPUT
+
+		cmp #$0D				; Prevent double-CRs.
+		bne EchoInput
+		pha
+		jmp NonPrintable
+EchoInput
 
 ; Tiny Basic output.
 SNDCHR
@@ -2353,7 +2265,6 @@ ILTBL    .byte $24, $3E, $91, $27, $10, $E1, $59, $C5, $2A, $56, $10, $11, $2C, 
 ; End of Tiny Basic
 
 MBLK
-         .byte  "vectron 65 basic"
+         .byte  "              vectron 65 basic"
 				 .byte  $0D
-         .byte  "boot (c/w)? "
          .byte  $FF

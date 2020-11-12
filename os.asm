@@ -1,4 +1,6 @@
 ;;;;
+; Vectron 65 Operating System
+;
 ; Nick Bild
 ; nick.bild@gmail.com
 ; November 2020
@@ -7,8 +9,9 @@
 ;
 ; $0000-$7EFF - RAM
 ; 		$0000-$0006 - Named variables
+;			$0020-$00D7 - Tiny Basic variables/config
 ; 		$0100-$01FF - 6502 stack
-;     $0200-$     - Tiny Basic
+;     $0200-$5100 - Tiny Basic user program
 ;     $5101-$5130 - Display row 1
 ;     $5201-$5230 - Display row 2
 ;     $5301-$5330 - Display row 3
@@ -106,7 +109,7 @@ StartExe	ORG $8000
     ; Init the keyboard, LEDs, and flags.
     jsr   KBINIT
 
-		; Set all screen memory to spaces (blank)
+		; Set all screen memory to spaces (blank).
 		jsr ClearScreenMemory
 
 		; Set initial screen address.
@@ -115,19 +118,21 @@ StartExe	ORG $8000
 		lda #$01
 		sta ScreenRow
 
-    cli
-
 		lda ScreenRow
 		sta $7FF0
 		lda ScreenColumn
 		sta $7FF1
 
+    cli
 
+
+; Start Tiny Basic.
 FBLK     ldx #$00                   ; Offset for welcome message and prompt
          jsr SNDMSG                 ; Go print it
 				 jmp COLD_S									; Cold start.
 
 
+; Print the startup message.
 SNDMSG   lda MBLK,X                 ; Get a character from the message block
          cmp #$FF                   ; Look for end of message marker
          beq EXSM                   ; Finish up if it is
@@ -278,6 +283,7 @@ BREAK
 		rts
 
 
+; Stored typed character in RAM.
 SaveCharacter
 		lda ScreenRow
 		ldx ScreenColumn
@@ -510,6 +516,7 @@ DoneSavingCharacter
 		rts
 
 
+; Scroll stored screen data up by 1 row.
 ScrollScreenDataUp
 		ldx #$30
 Row2to1
@@ -709,6 +716,8 @@ Clear28
 
 		rts
 
+
+; Set all screen memory positions to space (blank).
 ClearScreenMemory
 		lda #$20 ; Space
 
@@ -883,6 +892,7 @@ ClearScreen28
 		rts
 
 
+; Redraw entire display from screen memory.
 RedrawScreen
 		lda #$01
 		sta $7FF0

@@ -2,6 +2,10 @@
 
 The Vectron 65 is a 6502 CPU-based breadboard computer.  It supports VGA output, keyboard input, boots into a BASIC interpreter, and has lots of GPIOs.
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/nickbild/vectron_65/main/media/basic.gif">
+</p>
+
 This computer is a much-upgraded version of my original [Vectron 64 computer](https://github.com/nickbild/vectron_64).
 
 ## Specs

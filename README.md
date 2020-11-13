@@ -9,7 +9,7 @@ This computer is a much-upgraded version of my original [Vectron 64 computer](ht
 * [65C02 CPU](https://en.wikipedia.org/wiki/MOS_Technology_6502) clocked at 8 Mhz.
 * 32KB RAM
 * 32KB EEPROM
-  - Programmable via [custom Arduino Mega 2560 based platform] (https://github.com/nickbild/eeprom_burner_mega).
+  - Programmable via [custom Arduino Mega 2560 based platform](https://github.com/nickbild/eeprom_burner_mega).
 * 400x300 @ 60Hz VGA output, as 50x30 text mode display. See [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode).
 * PS/2 keyboard support.
 * Boots into Tom Pittman's Tiny Basic.

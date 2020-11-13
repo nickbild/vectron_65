@@ -17,7 +17,7 @@ This computer is a much-upgraded version of my original [Vectron 64 computer](ht
 * 400x300 @ 60Hz VGA output, as 50x30 text mode display.
   - See my [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode) project for details.
 * PS/2 keyboard support.
-* Boots into Tom Pittman's Tiny Basic.
+* Boots into Tom Pittman's Tiny BASIC.
 * 19 GPIOs
 * Built with 7400 series logic contemporary with the original 6502 CPU (with the exception of the FPGA-based VGA output).
 
@@ -37,6 +37,18 @@ Home automation using the GPIOs—who needs a Raspberry Pi? :)
 ## Schematics
 
 Coming soon!
+
+## Operation
+
+The operating system source code is available in [os.asm](https://github.com/nickbild/vectron_65/blob/main/os.asm).  Assembly was done with [dasm](https://dasm-assembler.github.io/).  The convenience script, [build.sh](https://github.com/nickbild/vectron_65/blob/main/build.sh) assembles the source and feeds it into [hex_for_mega.py](https://github.com/nickbild/vectron_65/blob/main/hex_for_mega.py) to prepare the data needed for programming the EEPROM with my [Arduino-based EEPROM burner](https://github.com/nickbild/eeprom_burner_mega).  Insert the output from `build.sh` into the `data` array in the Arduino sketch.  Wiring is straightforward—see top of sketch for details.
+
+VGA output is produced with the help of a TinyFPGA BX using my [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode) project.  Characters are added to the screen by writing the row and column number to a 65C22 VIA's port A and B, then hitting a latch address with the desired character ASCII code on the data bus.  I would prefer to keep FPGAs out of the design for a 'pure' retro computer, but I have already been down the path of building 7400-series IC based VGA generators (see [Vectron VGA](https://github.com/nickbild/vectron_vga)), and simply do not want that much bulk sitting on my desk.
+
+On powering up the computer and clicking the reset button, a Tiny BASIC prompt is shown on screen.  See the [Tiny BASIC manual] for specifics on this version of BASIC.
+
+## Future Direction
+
+I will most likely have a PCB manufactured in the very near future.  I am just deciding if I want to build any additional functionality into the computer first.
 
 ## About the Author
 

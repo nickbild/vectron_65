@@ -106,6 +106,14 @@ StartExe	ORG $8000
 		lda #$7F
 		sta $7FEE
 
+		; Set DDRA to all outputs.
+		lda #$FF
+		sta $7FE3
+
+		; Set ORA outputs low.
+		lda #$00
+		sta $7FE1
+
     ; Init the keyboard, LEDs, and flags.
     jsr   KBINIT
 
@@ -280,6 +288,20 @@ NonPrintable
 BREAK
 		clc		; Never break.
 
+		rts
+
+
+; Set all pins in port A low on keyboard VIA.
+KbViaPaLow
+		lda #$00
+		sta $7FE1
+		rts
+
+
+; Set all pins in port A high on keyboard VIA.
+KbViaPaHigh
+		lda #$FF
+		sta $7FE1
 		rts
 
 

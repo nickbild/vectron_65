@@ -44,6 +44,8 @@ The operating system source code is available in [os.asm](https://github.com/nic
 
 VGA output is produced with the help of a TinyFPGA BX using my [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode) project.  Characters are added to the screen by writing the row and column number to a 65C22 VIA's port A and B, then hitting a latch address with the desired character ASCII code on the data bus.  I would prefer to keep FPGAs out of the design for a 'pure' retro computer, but I have already been down the path of building 7400-series IC based VGA generators (see [Vectron VGA](https://github.com/nickbild/vectron_vga)), and simply do not want that much bulk sitting on my desk.
 
+A second 65C22 VIA handles keyboard input.  Unused VIA port pins are available to use as GPIO.
+
 On powering up the computer and clicking the reset button, a Tiny BASIC prompt is shown on screen.  See the [Tiny BASIC manual] for specifics on this version of BASIC.
 
 ## Future Direction

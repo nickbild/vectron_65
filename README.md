@@ -50,7 +50,7 @@ VGA output is produced with the help of a TinyFPGA BX using my [MiniVGA Text Mod
 
 A second 65C22 VIA handles keyboard input.  Unused VIA port pins are available to use as GPIO.
 
-On powering up the computer and clicking the reset button, a Tiny BASIC prompt is shown on screen.  See the [Tiny BASIC manual] for specifics on this version of BASIC.
+On powering up the computer and clicking the reset button, a Tiny BASIC prompt is shown on screen.  See the [Tiny BASIC manual](http://www.ittybittycomputers.com/ittybitty/tinybasic/tbuserman.htm) for specifics on this version of BASIC.
 
 ## Future Direction
 

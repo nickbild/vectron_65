@@ -10,7 +10,8 @@ This computer is a much-upgraded version of my original [Vectron 64 computer](ht
 * 32KB RAM
 * 32KB EEPROM
   - Programmable via [custom Arduino Mega 2560 based platform](https://github.com/nickbild/eeprom_burner_mega).
-* 400x300 @ 60Hz VGA output, as 50x30 text mode display. See my [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode) project for details.
+* 400x300 @ 60Hz VGA output, as 50x30 text mode display.
+  - See my [MiniVGA Text Mode](https://github.com/nickbild/fpga_vga_text_mode) project for details.
 * PS/2 keyboard support.
 * Boots into Tom Pittman's Tiny Basic.
 * 19 GPIOs

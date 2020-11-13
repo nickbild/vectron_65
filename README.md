@@ -19,7 +19,8 @@ This computer is a much-upgraded version of my original [Vectron 64 computer](ht
 
 ## Media
 
-Coming soon!
+YouTube:  
+https://www.youtube.com/watch?v=CHY8aZnOKDY
 
 ## Schematics
 

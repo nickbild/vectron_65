@@ -26,7 +26,8 @@ This computer is a much-upgraded version of my original [Vectron 64 computer](ht
 YouTube:  
 https://www.youtube.com/watch?v=CHY8aZnOKDY
 
-![Vectron 65](https://raw.githubusercontent.com/nickbild/vectron_65/main/media/v65_sm.gif)
+Vectron 65:
+![Vectron 65](https://raw.githubusercontent.com/nickbild/vectron_65/main/media/v65_sm.jpg)
 
 Home automation using the GPIOs—who needs a Raspberry Pi? :)
 <p align="left">

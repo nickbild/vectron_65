@@ -34,6 +34,10 @@ Home automation using the GPIOs—who needs a Raspberry Pi? :)
 <img src="https://raw.githubusercontent.com/nickbild/vectron_65/main/media/light_tree.gif">
 </p>
 
+EEPROM Burner:
+![EEPROM Burner](https://raw.githubusercontent.com/nickbild/vectron_65/main/media/eeprom_burner_sm.jpg.jpg)
+
+
 ## Schematics
 
 Coming soon!
